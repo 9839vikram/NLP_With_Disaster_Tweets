@@ -37,95 +37,80 @@ df1.head()
 df1.isnull().sum()
 
 
-# In[5]:
-
-
-df1["length"] = df1["text"].apply(len)
-
-
-# In[6]:
-
-
-fig,(ax1,ax2)=plt.subplots(1,2,figsize=(15,5))
-sns.countplot(df1[df1["target"] == 1]["length"],ax = ax1).set(title = "disaster tweets")
-sns.countplot(df1[df1["target"] == 0]["length"],ax = ax2).set(title = "Not disaster tweets")
-plt.show()
-
-
 # In[ ]:
 
 
 
 
 
-# In[7]:
+# In[5]:
 
 
 train_disater = df1[df1['target'] == 1]
 
 
-# In[8]:
+# In[6]:
 
 
 train_disater
 
 
-# In[9]:
+# In[7]:
 
 
 train_not_disater = df1[df1['target'] == 0]
 
 
-# In[10]:
+# In[8]:
 
 
 train_not_disater
 
 
-# In[11]:
+# In[9]:
 
 
 vectorizer = CountVectorizer()
 
 
-# In[12]:
+# In[10]:
 
 
 train_disaster_countvectorizer = vectorizer.fit_transform(df1['text'])
 
 
-# In[13]:
+# In[11]:
 
 
 train_disaster_countvectorizer.toarray()
 
 
-# In[14]:
+# In[12]:
 
 
 label = df1['target']
 label
 
 
-# In[15]:
+# In[13]:
 
 
 df2.head()
 
 
-# In[16]:
+# In[14]:
 
 
 df2.isnull().sum()
 
 
-# In[17]:
+# In[15]:
 
 
 test_disaster_countvectorizer = vectorizer.transform(df2['text'])
 
 
-# In[18]:
+# In[16]:
 
 
 test_disaster_countvectorizer.toarray()
@@ -135,75 +120,75 @@ test_disaster_countvectorizer.toarray()
 
 # ## Support Vector Machine
 
-# In[19]:
+# In[17]:
 
 
 from sklearn.svm import SVC
 
 
-# In[20]:
+# In[18]:
 
 
 model_svc=SVC(C=100,kernel='rbf')
 
 
-# In[21]:
+# In[19]:
 
 
 model_svc.fit(train_disaster_countvectorizer, label)
 
 
-# In[22]:
+# In[20]:
 
 
 test_sample = test_disaster_countvectorizer.toarray()
 test_sample
 
 
-# In[23]:
+# In[21]:
 
 
 test_sample.shape
 
 
-# In[24]:
+# In[22]:
 
 
 prediction = model_svc.predict(test_sample)
 
 
-# In[25]:
+# In[23]:
 
 
 prediction_df = pd.DataFrame(prediction, columns=['target'])
 
 
-# In[26]:
+# In[24]:
 
 
 prediction_df
 
 
-# In[27]:
+# In[25]:
 
 
 predicted_result = pd.concat([df2['id'], prediction_df], axis=1)
 predicted_result
 
 
-# In[28]:
+# In[26]:
 
 
 predicted_result.isnull().sum()
 
 
-# In[29]:
+# In[27]:
 
 
 predicted_result['target'].value_counts()
 
 
-# In[30]:
+# In[28]:
 
 
 predicted_result.to_csv('predicted_result.csv', index=False)
@@ -211,7 +196,7 @@ predicted_result.to_csv('predicted_result.csv', index=False)
 
 # # Training and valuation with splitted train test data
 
-# In[31]:
+# In[29]:
 
 
 from sklearn.model_selection import train_test_split
@@ -220,19 +205,19 @@ x_train, x_test, y_train, y_test = train_test_split(train_disaster_countvectoriz
 
 # ## Support Vector Machine Classifier
 
-# In[32]:
+# In[30]:
 
 
 model_svc.fit(x_train, y_train)
 
 
-# In[33]:
+# In[31]:
 
 
 predictions_svc = model_svc.predict(x_test)
 
 
-# In[34]:
+# In[32]:
 
 
 print(classification_report(y_test, predictions_svc))
@@ -240,7 +225,7 @@ print(classification_report(y_test, predictions_svc))
 
 # ## KNeighborsClassifier
 
-# In[35]:
+# In[33]:
 
 
 from sklearn.neighbors import KNeighborsClassifier
@@ -248,13 +233,13 @@ model_knc = KNeighborsClassifier()
 model_knc.fit(x_train, y_train)
 
 
-# In[36]:
+# In[34]:
 
 
 predictions_knc = model_knc.predict(x_test)
 
 
-# In[37]:
+# In[35]:
 
 
 print(classification_report(y_test, predictions_knc))
@@ -262,7 +247,7 @@ print(classification_report(y_test, predictions_knc))
 
 # ## Random Forest Classifier
 
-# In[38]:
+# In[36]:
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -270,13 +255,13 @@ model_rfc = RandomForestClassifier()
 model_rfc.fit(x_train, y_train)
 
 
-# In[39]:
+# In[37]:
 
 
 predictions_rfc = model_rfc.predict(x_test)
 
 
-# In[40]:
+# In[38]:
 
 
 print(classification_report(y_test, predictions_rfc))
@@ -290,7 +275,7 @@ print(classification_report(y_test, predictions_rfc))
 
 # ## Multinomial Naive Bayes
 
-# In[41]:
+# In[39]:
 
 
 from sklearn.naive_bayes import MultinomialNB
@@ -299,13 +284,13 @@ model_mnb = MultinomialNB()
 model_mnb.fit(x_train, y_train)
 
 
-# In[42]:
+# In[40]:
 
 
 predictions_mnb = model_mnb.predict(x_test)
 
 
-# In[43]:
+# In[41]:
 
 
 print(classification_report(y_test, predictions_mnb))
