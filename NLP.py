@@ -37,80 +37,95 @@ df1.head()
 df1.isnull().sum()
 
 
-# In[ ]:
-
-
-
-
-
 # In[5]:
 
 
-train_disater = df1[df1['target'] == 1]
+df1["length"] = df1["text"].apply(len)
 
 
 # In[6]:
 
 
-train_disater
+fig,(ax1,ax2)=plt.subplots(1,2,figsize=(15,5))
+sns.countplot(df1[df1["target"] == 1]["length"],ax = ax1).set(title = "disaster tweets")
+sns.countplot(df1[df1["target"] == 0]["length"],ax = ax2).set(title = "Not disaster tweets")
+plt.show()
 
 
 # In[7]:
 
 
-train_not_disater = df1[df1['target'] == 0]
+train_disater = df1[df1['target'] == 1]
 
 
 # In[8]:
 
 
-train_not_disater
+train_disater
 
 
 # In[9]:
 
 
-vectorizer = CountVectorizer()
+train_not_disater = df1[df1['target'] == 0]
 
 
 # In[10]:
 
 
-train_disaster_countvectorizer = vectorizer.fit_transform(df1['text'])
+train_not_disater
 
 
 # In[11]:
 
 
-train_disaster_countvectorizer.toarray()
+sns.countplot(df1['target'])
 
 
 # In[12]:
+
+
+vectorizer = CountVectorizer()
+
+
+# In[13]:
+
+
+train_disaster_countvectorizer = vectorizer.fit_transform(df1['text'])
+
+
+# In[14]:
+
+
+train_disaster_countvectorizer.toarray()
+
+
+# In[15]:
 
 
 label = df1['target']
 label
 
 
-# In[13]:
+# In[16]:
 
 
 df2.head()
 
 
-# In[14]:
+# In[17]:
 
 
 df2.isnull().sum()
 
 
-# In[15]:
+# In[18]:
 
 
 test_disaster_countvectorizer = vectorizer.transform(df2['text'])
 
 
-# In[16]:
+# In[19]:
 
 
 test_disaster_countvectorizer.toarray()
@@ -120,75 +135,75 @@ test_disaster_countvectorizer.toarray()
 
 # ## Support Vector Machine
 
-# In[17]:
+# In[20]:
 
 
 from sklearn.svm import SVC
 
 
-# In[18]:
+# In[21]:
 
 
 model_svc=SVC(C=100,kernel='rbf')
 
 
-# In[19]:
+# In[22]:
 
 
 model_svc.fit(train_disaster_countvectorizer, label)
 
 
-# In[20]:
+# In[23]:
 
 
 test_sample = test_disaster_countvectorizer.toarray()
 test_sample
 
 
-# In[21]:
+# In[24]:
 
 
 test_sample.shape
 
 
-# In[22]:
+# In[25]:
 
 
 prediction = model_svc.predict(test_sample)
 
 
-# In[23]:
+# In[26]:
 
 
 prediction_df = pd.DataFrame(prediction, columns=['target'])
 
 
-# In[24]:
+# In[27]:
 
 
 prediction_df
 
 
-# In[25]:
+# In[28]:
 
 
 predicted_result = pd.concat([df2['id'], prediction_df], axis=1)
 predicted_result
 
 
-# In[26]:
+# In[29]:
 
 
 predicted_result.isnull().sum()
 
 
-# In[27]:
+# In[30]:
 
 
 predicted_result['target'].value_counts()
 
 
-# In[28]:
+# In[31]:
 
 
 predicted_result.to_csv('predicted_result.csv', index=False)
@@ -196,7 +211,7 @@ predicted_result.to_csv('predicted_result.csv', index=False)
 
 # # Training and valuation with splitted train test data
 
-# In[29]:
+# In[32]:
 
 
 from sklearn.model_selection import train_test_split
@@ -205,19 +220,19 @@ x_train, x_test, y_train, y_test = train_test_split(train_disaster_countvectoriz
 
 # ## Support Vector Machine Classifier
 
-# In[30]:
+# In[33]:
 
 
 model_svc.fit(x_train, y_train)
 
 
-# In[31]:
+# In[34]:
 
 
 predictions_svc = model_svc.predict(x_test)
 
 
-# In[32]:
+# In[35]:
 
 
 print(classification_report(y_test, predictions_svc))
@@ -225,7 +240,7 @@ print(classification_report(y_test, predictions_svc))
 
 # ## KNeighborsClassifier
 
-# In[33]:
+# In[36]:
 
 
 from sklearn.neighbors import KNeighborsClassifier
@@ -233,13 +248,13 @@ model_knc = KNeighborsClassifier()
 model_knc.fit(x_train, y_train)
 
 
-# In[34]:
+# In[37]:
 
 
 predictions_knc = model_knc.predict(x_test)
 
 
-# In[35]:
+# In[38]:
 
 
 print(classification_report(y_test, predictions_knc))
@@ -247,7 +262,7 @@ print(classification_report(y_test, predictions_knc))
 
 # ## Random Forest Classifier
 
-# In[36]:
+# In[39]:
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -255,13 +270,13 @@ model_rfc = RandomForestClassifier()
 model_rfc.fit(x_train, y_train)
 
 
-# In[37]:
+# In[40]:
 
 
 predictions_rfc = model_rfc.predict(x_test)
 
 
-# In[38]:
+# In[41]:
 
 
 print(classification_report(y_test, predictions_rfc))
@@ -275,7 +290,7 @@ print(classification_report(y_test, predictions_rfc))
 
 # ## Multinomial Naive Bayes
 
-# In[39]:
+# In[42]:
 
 
 from sklearn.naive_bayes import MultinomialNB
@@ -284,16 +299,22 @@ model_mnb = MultinomialNB()
 model_mnb.fit(x_train, y_train)
 
 
-# In[40]:
+# In[43]:
 
 
 predictions_mnb = model_mnb.predict(x_test)
 
 
-# In[41]:
+# In[44]:
 
 
 print(classification_report(y_test, predictions_mnb))
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
